@@ -1,5 +1,4 @@
 import copy
-import random
 
 def play():
     game_pieces = [['_', '_', '_'], ['_', '_', '_'], [' ', ' ', ' ']]
@@ -12,8 +11,8 @@ def play():
     while not Game_Is_Over:
         # Human goes first
         game_pieces = one_turn(game_pieces, user_token)
-        Game_Is_Over = did_player_win(game_pieces, user_token)
-        if Game_Is_Over:
+        if did_player_win(game_pieces, user_token):
+            Game_Is_Over = True
             break
         user_turns_played += 1
 
@@ -27,7 +26,9 @@ def play():
 
         # Computer's turn
         game_pieces = computer_turn(game_pieces, computer_token, user_token)
-        Game_Is_Over = did_player_win(game_pieces, computer_token)
+        if did_player_win(game_pieces, computer_token):
+            Game_Is_Over = True
+            break
 
     # Game is over
     who_won(game_pieces, computer_token, user_token, Cats_Game)
@@ -35,8 +36,8 @@ def play():
 
 def one_turn(game_pieces, user_token):
     print draw_board(game_pieces)
-    user_turn = get_user_turn(game_pieces)
-    game_pieces[user_turn[0]][user_turn[1]] = '%s' % user_token
+    choice = get_user_turn(game_pieces)
+    game_pieces = place_choice(game_pieces, choice, user_token)
     print draw_board(game_pieces)
     return game_pieces
 
@@ -223,9 +224,9 @@ def did_player_win(game_pieces, token):
             return "Across", row[0]
 
     # Checks down
-    for i in range(0, len(game_pieces[0])):
-        if token == game_pieces[i][i] == (game_pieces[i-1][i] == 
-                                                game_pieces[i-2][i]):
+    for i in range(0, 3):
+        if (token == game_pieces[0][i] == game_pieces[1][i] == 
+                                                game_pieces[2][i]):
             return "Down", game_pieces[i][i]
 
     # Checks diagonals
@@ -258,7 +259,7 @@ def get_user_turn(game_pieces):
             continue
         empty_spot = is_empty_spot(game_pieces, choice)
 
-    return find_board_index(choice)
+    return choice
 
 
 def is_empty_spot(game_pieces, choice):
@@ -343,6 +344,6 @@ print '''\n
  ||                                               ||
   \= = = = = = = = = = = = = = = = = = = = = = = =/
    \= = = = = = = = = = = = = = = = = = = = = = =/
-'''
+''' 
 
 play()
